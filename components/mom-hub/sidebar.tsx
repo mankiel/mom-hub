@@ -10,8 +10,6 @@ import {
   HandHeart,
   CalendarDays,
   Bell,
-  Settings,
-  Users,
 } from "lucide-react"
 import {
   Sidebar,
@@ -23,7 +21,6 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarHeader,
-  SidebarFooter,
 } from "@/components/ui/sidebar"
 
 const MAIN_NAV = [
@@ -92,27 +89,6 @@ export function MomHubSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-
-      <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton asChild isActive={pathname === "/family"}>
-              <Link href="/family">
-                <Users className="h-4 w-4" />
-                <span>Family Members</span>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton asChild isActive={pathname === "/settings"}>
-              <Link href="/settings">
-                <Settings className="h-4 w-4" />
-                <span>Settings</span>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarFooter>
     </Sidebar>
   )
 }
