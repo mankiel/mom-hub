@@ -25,9 +25,16 @@ const ocrResultSchema = z.object({
 })
 
 export async function POST(req: Request) {
-  const { image } = await req.json()
+  let body: { image?: string }
+  try {
+    body = await req.json()
+  } catch {
+    return Response.json({ error: "Invalid request body" }, { status: 400 })
+  }
 
-  if (!image) {
+  const { image } = body
+
+  if (!image || typeof image !== "string") {
     return Response.json({ error: "No image provided" }, { status: 400 })
   }
 
@@ -59,11 +66,27 @@ Be thorough - extract every date, time, and location mentioned.`,
       ],
     })
 
+    if (!output) {
+      return Response.json(
+        { error: "Could not extract information from the image. Try a clearer screenshot." },
+        { status: 422 }
+      )
+    }
+
     return Response.json({ result: output })
-  } catch (error) {
-    console.error("OCR error:", error)
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error)
+    console.error("[v0] OCR error:", message)
+    
+    if (message.includes("API key") || message.includes("authentication") || message.includes("Unauthorized")) {
+      return Response.json(
+        { error: "AI service not configured. Please set up the Vercel AI Gateway or add an OpenAI API key." },
+        { status: 401 }
+      )
+    }
+
     return Response.json(
-      { error: "Failed to process image. Please try again." },
+      { error: `Failed to process image: ${message}` },
       { status: 500 }
     )
   }
