@@ -3,16 +3,12 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
   images: {
     unoptimized: true,
   },
-  // Force clean rebuild
-  webpack: (config) => {
-    return config
-  },
+  // Turbopack is enabled by default in Next.js 16
+  // Empty config acknowledges we're using default Turbopack settings
+  turbopack: {},
 }
 
 export default nextConfig
