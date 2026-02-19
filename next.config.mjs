@@ -6,7 +6,8 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  // Empty turbopack config to acknowledge Turbopack usage
+  // Turbopack is enabled by default in Next.js 16
+  // Empty config acknowledges we're using default Turbopack settings
   turbopack: {},
 }
 
