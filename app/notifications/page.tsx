@@ -158,14 +158,14 @@ export default function NotificationsPage() {
     <DashboardLayout title="Notifications" subtitle={`${unreadCount} unread`}>
       <div className="grid gap-6 lg:grid-cols-4">
         <div className="lg:col-span-3 flex flex-col gap-4">
-          <div className="flex items-center justify-between">
-            <div className="flex gap-2">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex gap-2 overflow-x-auto pb-1 sm:pb-0 -mx-1 px-1">
               {(["all", "ClassDojo", "GameChanger", "GetConnected"] as FilterType[]).map((f) => (
                 <button
                   key={f}
                   onClick={() => setFilter(f)}
                   className={cn(
-                    "inline-flex items-center rounded-full px-3 py-1 text-xs font-medium transition-colors",
+                    "inline-flex items-center whitespace-nowrap rounded-full px-3 py-1 text-xs font-medium transition-colors shrink-0",
                     filter === f
                       ? "bg-primary text-primary-foreground"
                       : "bg-muted text-muted-foreground hover:bg-muted/80"
@@ -178,7 +178,7 @@ export default function NotificationsPage() {
             {unreadCount > 0 && (
               <button
                 onClick={markAllRead}
-                className="text-xs font-medium text-primary hover:underline"
+                className="text-xs font-medium text-primary hover:underline shrink-0"
               >
                 Mark all as read
               </button>

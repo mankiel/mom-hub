@@ -1,38 +1,64 @@
 "use client"
 
-import { createContext, useContext, useState, type ReactNode } from "react"
+import { createContext, useContext, useState, useEffect } from "react"
+import type { ReactNode } from "react"
+import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import {
-  Heart,
   LayoutDashboard,
   GraduationCap,
   Trophy,
   HandHeart,
   CalendarDays,
   Bell,
-  Settings,
-  Users,
+  ClipboardPaste,
+  Plug,
   PanelLeft,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import {
+  Sheet,
+  SheetContent,
+  SheetTitle,
+} from "@/components/ui/sheet"
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
 
-const SidebarContext = createContext({ open: true, toggle: () => {} })
+const SidebarContext = createContext({
+  open: true,
+  toggle: () => {},
+  mobileOpen: false,
+  setMobileOpen: (_open: boolean) => {},
+})
 
 export function SidebarProvider({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(true)
+  const [mobileOpen, setMobileOpen] = useState(false)
   return (
-    <SidebarContext.Provider value={{ open, toggle: () => setOpen((o) => !o) }}>
+    <SidebarContext.Provider
+      value={{
+        open,
+        toggle: () => setOpen((prev) => !prev),
+        mobileOpen,
+        setMobileOpen,
+      }}
+    >
       <div className="flex h-screen overflow-hidden">{children}</div>
     </SidebarContext.Provider>
   )
 }
 
 export function SidebarTrigger({ className }: { className?: string }) {
-  const { toggle } = useContext(SidebarContext)
+  const { toggle, setMobileOpen } = useContext(SidebarContext)
   return (
     <button
-      onClick={toggle}
+      onClick={() => {
+        if (window.innerWidth < 768) {
+          setMobileOpen(true)
+        } else {
+          toggle()
+        }
+      }}
       className={cn(
         "inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground transition-colors",
         className
@@ -54,6 +80,7 @@ export function SidebarInset({ children }: { children: ReactNode }) {
 
 const MAIN_NAV = [
   { title: "Overview", href: "/", icon: LayoutDashboard },
+  { title: "Smart Import", href: "/import", icon: ClipboardPaste },
   { title: "Calendar", href: "/calendar", icon: CalendarDays },
   { title: "Notifications", href: "/notifications", icon: Bell },
 ]
@@ -62,26 +89,23 @@ const SOURCES_NAV = [
   { title: "ClassDojo", href: "/classdojo", icon: GraduationCap },
   { title: "GameChanger", href: "/gamechanger", icon: Trophy },
   { title: "GetConnected", href: "/getconnected", icon: HandHeart },
+  { title: "Connections", href: "/connections", icon: Plug },
 ]
 
-const FOOTER_NAV = [
-  { title: "Family Members", href: "/family", icon: Users },
-  { title: "Settings", href: "/settings", icon: Settings },
-]
-
-function NavItem({
-  item,
-  isActive,
-  collapsed,
-}: {
+interface NavItemProps {
   item: { title: string; href: string; icon: React.ComponentType<{ className?: string }> }
   isActive: boolean
   collapsed: boolean
-}) {
+  onClick?: () => void
+}
+
+function NavItem({ item, isActive, collapsed, onClick }: NavItemProps) {
+  const IconComponent = item.icon
   return (
     <Link
       href={item.href}
       title={collapsed ? item.title : undefined}
+      onClick={onClick}
       className={cn(
         "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors",
         isActive
@@ -89,27 +113,26 @@ function NavItem({
           : "text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground"
       )}
     >
-      <item.icon className="h-4 w-4 shrink-0" />
+      <IconComponent className="h-4 w-4 shrink-0" />
       {!collapsed && <span className="truncate">{item.title}</span>}
     </Link>
   )
 }
 
-export function MomHubSidebar() {
+function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname()
-  const { open } = useContext(SidebarContext)
 
   return (
-    <aside
-      className={cn(
-        "flex h-screen shrink-0 flex-col border-r bg-sidebar text-sidebar-foreground transition-all duration-300",
-        open ? "w-64" : "w-0 overflow-hidden border-r-0"
-      )}
-    >
+    <>
       <div className="flex h-14 items-center gap-3 border-b border-sidebar-border px-4">
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-sidebar-primary">
-          <Heart className="h-4 w-4 text-sidebar-primary-foreground" />
-        </div>
+        <Image
+          src="/images/logo.png"
+          alt="Mom Hub logo"
+          width={32}
+          height={32}
+          className="shrink-0 rounded-lg"
+          style={{ width: 32, height: "auto" }}
+        />
         <div className="flex flex-col">
           <span className="text-sm font-semibold">Mom Hub</span>
           <span className="text-[10px] text-sidebar-foreground/60">Family Dashboard</span>
@@ -124,7 +147,13 @@ export function MomHubSidebar() {
         </div>
         <div className="space-y-0.5">
           {MAIN_NAV.map((item) => (
-            <NavItem key={item.href} item={item} isActive={pathname === item.href} collapsed={false} />
+            <NavItem
+              key={item.href}
+              item={item}
+              isActive={pathname === item.href}
+              collapsed={false}
+              onClick={onNavigate}
+            />
           ))}
         </div>
 
@@ -135,16 +164,49 @@ export function MomHubSidebar() {
         </div>
         <div className="space-y-0.5">
           {SOURCES_NAV.map((item) => (
-            <NavItem key={item.href} item={item} isActive={pathname === item.href} collapsed={false} />
+            <NavItem
+              key={item.href}
+              item={item}
+              isActive={pathname === item.href}
+              collapsed={false}
+              onClick={onNavigate}
+            />
           ))}
         </div>
       </nav>
+    </>
+  )
+}
 
-      <div className="space-y-0.5 border-t border-sidebar-border p-2">
-        {FOOTER_NAV.map((item) => (
-          <NavItem key={item.href} item={item} isActive={pathname === item.href} collapsed={false} />
-        ))}
-      </div>
-    </aside>
+export function MomHubSidebar() {
+  const pathname = usePathname()
+  const { open, mobileOpen, setMobileOpen } = useContext(SidebarContext)
+
+  useEffect(() => {
+    setMobileOpen(false)
+  }, [pathname, setMobileOpen])
+
+  return (
+    <>
+      {/* Desktop sidebar */}
+      <aside
+        className={cn(
+          "hidden md:flex h-screen shrink-0 flex-col border-r bg-sidebar text-sidebar-foreground transition-all duration-300",
+          open ? "w-64" : "w-0 overflow-hidden border-r-0"
+        )}
+      >
+        <SidebarNav />
+      </aside>
+
+      {/* Mobile drawer */}
+      <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+        <SheetContent side="left" className="w-64 p-0 bg-sidebar text-sidebar-foreground md:hidden">
+          <VisuallyHidden>
+            <SheetTitle>Navigation</SheetTitle>
+          </VisuallyHidden>
+          <SidebarNav onNavigate={() => setMobileOpen(false)} />
+        </SheetContent>
+      </Sheet>
+    </>
   )
 }

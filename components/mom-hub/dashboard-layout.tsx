@@ -19,17 +19,17 @@ export function DashboardLayout({ title, subtitle, children }: DashboardLayoutPr
     <SidebarProvider>
       <MomHubSidebar />
       <SidebarInset>
-        <header className="flex h-14 shrink-0 items-center gap-2 border-b px-6">
+        <header className="flex h-14 shrink-0 items-center gap-2 border-b px-4 md:px-6">
           <SidebarTrigger className="-ml-1" />
           <Separator orientation="vertical" className="mr-2 h-4" />
-          <div className="flex flex-1 items-center justify-between">
-            <h1 className="text-lg font-semibold">{title}</h1>
+          <div className="flex flex-1 items-center justify-between min-w-0">
+            <h1 className="text-lg font-semibold truncate">{title}</h1>
             {subtitle && (
-              <p className="text-sm text-muted-foreground">{subtitle}</p>
+              <p className="hidden sm:block text-sm text-muted-foreground">{subtitle}</p>
             )}
           </div>
         </header>
-        <main className="flex flex-1 flex-col gap-6 p-6">
+        <main className="flex flex-1 flex-col gap-4 p-4 md:gap-6 md:p-6">
           {children}
         </main>
       </SidebarInset>
