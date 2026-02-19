@@ -55,13 +55,14 @@ export default function CalendarPage() {
               {DAYS.map((day) => (
                 <div
                   key={day}
-                  className="bg-muted px-2 py-2 text-center text-xs font-medium text-muted-foreground"
+                  className="bg-muted px-1 py-1.5 md:px-2 md:py-2 text-center text-[10px] md:text-xs font-medium text-muted-foreground"
                 >
-                  {day}
+                  <span className="md:hidden">{day.charAt(0)}</span>
+                  <span className="hidden md:inline">{day}</span>
                 </div>
               ))}
               {Array.from({ length: firstDay }).map((_, i) => (
-                <div key={`empty-${i}`} className="bg-card min-h-20 p-1" />
+                <div key={`empty-${i}`} className="bg-card min-h-10 md:min-h-20 p-1" />
               ))}
               {Array.from({ length: daysInMonth }).map((_, i) => {
                 const day = i + 1
@@ -70,16 +71,26 @@ export default function CalendarPage() {
                 return (
                   <div
                     key={day}
-                    className={`bg-card min-h-20 p-1.5 ${isToday ? "ring-2 ring-primary ring-inset" : ""}`}
+                    className={`bg-card min-h-10 md:min-h-20 p-1 md:p-1.5 ${isToday ? "ring-2 ring-primary ring-inset" : ""}`}
                   >
                     <span
-                      className={`inline-flex h-6 w-6 items-center justify-center rounded-full text-xs font-medium ${
+                      className={`inline-flex h-5 w-5 md:h-6 md:w-6 items-center justify-center rounded-full text-[10px] md:text-xs font-medium ${
                         isToday ? "bg-primary text-primary-foreground" : "text-foreground"
                       }`}
                     >
                       {day}
                     </span>
-                    <div className="mt-0.5 space-y-0.5">
+                    {/* Mobile: colored dots */}
+                    <div className="mt-0.5 flex flex-wrap gap-0.5 md:hidden">
+                      {dayEvents.map((event, j) => (
+                        <span
+                          key={j}
+                          className={`${event.color} h-1.5 w-1.5 rounded-full`}
+                        />
+                      ))}
+                    </div>
+                    {/* Desktop: full event labels */}
+                    <div className="mt-0.5 space-y-0.5 hidden md:block">
                       {dayEvents.map((event, j) => (
                         <div
                           key={j}
