@@ -140,7 +140,7 @@ export default function FamilyMembersPage() {
           <h2 className="text-lg font-semibold mb-4">Children</h2>
           <div className="grid gap-4 md:grid-cols-2">
             {children.map((child, index) => (
-              <Card key={child.name}>
+              <Card key={`child-${index}-${child.name}`}>
                 <CardHeader>
                   <div className="flex items-center gap-4">
                     <Avatar className="h-16 w-16">
@@ -166,8 +166,8 @@ export default function FamilyMembersPage() {
                     <div>
                       <p className="text-xs text-muted-foreground mb-2">Activities</p>
                       <div className="flex flex-wrap gap-1.5">
-                        {child.activities.map((activity) => (
-                          <Badge key={activity} variant="secondary" className="text-xs">
+                        {child.activities.map((activity, activityIndex) => (
+                          <Badge key={`${activity}-${activityIndex}`} variant="secondary" className="text-xs">
                             {activity}
                           </Badge>
                         ))}
@@ -186,7 +186,7 @@ export default function FamilyMembersPage() {
           <h2 className="text-lg font-semibold mb-4">Parents</h2>
           <div className="grid gap-4 md:grid-cols-2">
             {parents.map((parent, index) => (
-              <Card key={parent.name}>
+              <Card key={`parent-${index}-${parent.name}`}>
                 <CardHeader>
                   <div className="flex items-center gap-4">
                     <Avatar className="h-16 w-16">
