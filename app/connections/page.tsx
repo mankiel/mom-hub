@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useState, useCallback, useEffect } from "react"
 import {
   MessageSquare,
   Users,
@@ -117,12 +117,43 @@ export default function ConnectionsPage() {
     }))
   }, [])
 
+  // Auto-connect GroupMe if server-side token is configured
+  useEffect(() => {
+    async function checkServerToken() {
+      try {
+        const res = await fetch("/api/connections/groupme")
+        const data = await res.json()
+        if (data.configured) {
+          updateConnection("groupme", { status: "connecting", token: "server" })
+          const verifyRes = await fetch("/api/connections/groupme", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: "verify" }),
+          })
+          const verifyData = await verifyRes.json()
+          if (verifyRes.ok) {
+            updateConnection("groupme", {
+              status: "connected",
+              token: "server",
+              userName: verifyData.user.name,
+              lastSynced: new Date().toISOString(),
+            })
+          } else {
+            updateConnection("groupme", { status: "error", token: "", error: verifyData.error })
+          }
+        }
+      } catch { /* silent - fallback to manual entry */ }
+    }
+    checkServerToken()
+  }, [updateConnection])
+
   async function connectGroupMe() {
     const conn = connections.groupme
-    if (!conn.token.trim()) return
+    if (!conn.token.trim() || conn.token === "server") return
     updateConnection("groupme", { status: "connecting", error: undefined })
 
     try {
+      // Send token in body for manual entry (server-side env var takes precedence in the API route)
       const res = await fetch("/api/connections/groupme", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -144,15 +175,14 @@ export default function ConnectionsPage() {
   }
 
   async function syncGroupMe() {
-    const conn = connections.groupme
-    if (conn.status !== "connected") return
+    if (connections.groupme.status !== "connected") return
     setGroupmeData(prev => ({ ...prev, syncing: true }))
 
     try {
       const res = await fetch("/api/connections/groupme", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token: conn.token, action: "groups" }),
+        body: JSON.stringify({ action: "groups" }),
       })
       const data = await res.json()
       if (res.ok) {
@@ -175,12 +205,11 @@ export default function ConnectionsPage() {
       return
     }
 
-    const conn = connections.groupme
     try {
       const res = await fetch("/api/connections/groupme", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token: conn.token, action: "messages", groupId }),
+        body: JSON.stringify({ action: "messages", groupId }),
       })
       const data = await res.json()
       if (res.ok) {
@@ -302,7 +331,12 @@ export default function ConnectionsPage() {
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            {connections.groupme.status !== "connected" ? (
+            {connections.groupme.status === "connecting" && connections.groupme.token === "server" ? (
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Connecting with your saved token...
+              </div>
+            ) : connections.groupme.status !== "connected" ? (
               <>
                 <div className="rounded-lg border border-dashed p-3">
                   <p className="text-xs text-muted-foreground mb-2">
@@ -316,14 +350,14 @@ export default function ConnectionsPage() {
                     <Input
                       type="password"
                       placeholder="Paste your access token"
-                      value={connections.groupme.token}
+                      value={connections.groupme.token === "server" ? "" : connections.groupme.token}
                       onChange={e => updateConnection("groupme", { token: e.target.value })}
                       className="text-sm"
                     />
                     <Button
                       size="sm"
                       onClick={connectGroupMe}
-                      disabled={!connections.groupme.token.trim() || connections.groupme.status === "connecting"}
+                      disabled={!connections.groupme.token.trim() || connections.groupme.token === "server" || connections.groupme.status === "connecting"}
                     >
                       {connections.groupme.status === "connecting" ? (
                         <Loader2 className="h-4 w-4 animate-spin" />

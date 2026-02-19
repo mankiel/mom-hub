@@ -2,6 +2,11 @@ import { NextResponse } from "next/server"
 
 const GROUPME_API = "https://api.groupme.com/v3"
 
+export async function GET() {
+  const token = process.env.GROUPME_ACCESS_TOKEN
+  return NextResponse.json({ configured: !!token })
+}
+
 export async function POST(req: Request) {
   let body: { token?: string; action?: string; groupId?: string }
   try {
@@ -10,10 +15,12 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid request" }, { status: 400 })
   }
 
-  const { token, action, groupId } = body
+  const { action, groupId } = body
+  // Use server-side env var first, fall back to client-provided token
+  const token = process.env.GROUPME_ACCESS_TOKEN || body.token
 
   if (!token) {
-    return NextResponse.json({ error: "Access token required" }, { status: 401 })
+    return NextResponse.json({ error: "GroupMe access token not configured. Add GROUPME_ACCESS_TOKEN in your environment variables." }, { status: 401 })
   }
 
   try {
