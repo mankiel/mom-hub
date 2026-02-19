@@ -23,8 +23,6 @@ const familyMembers = [
     grade: "5th Grade",
     school: "Lincoln Elementary",
     activities: ["Soccer", "Art Club", "Chess"],
-    avatarBg: "bg-chart-1/10",
-    avatarText: "text-chart-1",
   },
   {
     name: "Liam",
@@ -34,8 +32,6 @@ const familyMembers = [
     grade: "3rd Grade",
     school: "Lincoln Elementary",
     activities: ["Soccer", "Reading Club"],
-    avatarBg: "bg-chart-2/10",
-    avatarText: "text-chart-2",
   },
   {
     name: "Sarah",
@@ -43,8 +39,6 @@ const familyMembers = [
     role: "Parent",
     email: "sarah@example.com",
     phone: "(555) 123-4567",
-    avatarBg: "bg-chart-3/10",
-    avatarText: "text-chart-3",
   },
   {
     name: "John",
@@ -52,10 +46,18 @@ const familyMembers = [
     role: "Parent",
     email: "john@example.com",
     phone: "(555) 987-6543",
-    avatarBg: "bg-chart-4/10",
-    avatarText: "text-chart-4",
   },
 ]
+
+const getAvatarClasses = (index: number) => {
+  const classes = [
+    "bg-chart-1/10 text-chart-1",
+    "bg-chart-2/10 text-chart-2",
+    "bg-chart-3/10 text-chart-3",
+    "bg-chart-4/10 text-chart-4",
+  ]
+  return classes[index % classes.length]
+}
 
 export default function FamilyMembersPage() {
   const children = familyMembers.filter((member) => member.role === "Child")
@@ -63,6 +65,7 @@ export default function FamilyMembersPage() {
 
   // Calculate dynamic metrics
   const uniqueSchools = new Set(children.map((child) => child.school)).size
+  const allSchools = Array.from(new Set(children.map((child) => child.school)))
   const totalActivities = new Set(children.flatMap((child) => child.activities || [])).size
 
   return (
@@ -95,7 +98,7 @@ export default function FamilyMembersPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{uniqueSchools}</div>
-            <p className="mt-1 text-xs text-muted-foreground">Lincoln Elementary</p>
+            <p className="mt-1 text-xs text-muted-foreground">{allSchools.join(", ")}</p>
           </CardContent>
         </Card>
         <Card>
@@ -114,12 +117,12 @@ export default function FamilyMembersPage() {
         <div>
           <h2 className="text-lg font-semibold mb-4">Children</h2>
           <div className="grid gap-4 md:grid-cols-2">
-            {children.map((child) => (
+            {children.map((child, index) => (
               <Card key={child.name}>
                 <CardHeader>
                   <div className="flex items-center gap-4">
                     <Avatar className="h-16 w-16">
-                      <AvatarFallback className={`${child.avatarBg} ${child.avatarText} text-xl font-bold`}>
+                      <AvatarFallback className={`${getAvatarClasses(index)} text-xl font-bold`}>
                         {child.initials}
                       </AvatarFallback>
                     </Avatar>
@@ -160,12 +163,12 @@ export default function FamilyMembersPage() {
         <div>
           <h2 className="text-lg font-semibold mb-4">Parents</h2>
           <div className="grid gap-4 md:grid-cols-2">
-            {parents.map((parent) => (
+            {parents.map((parent, index) => (
               <Card key={parent.name}>
                 <CardHeader>
                   <div className="flex items-center gap-4">
                     <Avatar className="h-16 w-16">
-                      <AvatarFallback className={`${parent.avatarBg} ${parent.avatarText} text-xl font-bold`}>
+                      <AvatarFallback className={`${getAvatarClasses(children.length + index)} text-xl font-bold`}>
                         {parent.initials}
                       </AvatarFallback>
                     </Avatar>
