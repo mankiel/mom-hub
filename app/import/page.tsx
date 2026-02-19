@@ -252,21 +252,39 @@ function ScreenshotTab() {
     reader.readAsDataURL(file)
   }, [])
 
-  function simulateOCR() {
+  const [ocrError, setOcrError] = useState("")
+
+  async function runOCR() {
     if (!imageUrl) return
     setProcessing(true)
-    // Simulate processing delay
-    setTimeout(() => {
-      // Simulated OCR result based on the idea of a pasted screenshot
-      const simulatedText = `Soccer practice reminder from Coach Mike via GameChanger.
-Practice moved to Thursday, March 6th at 4:30 PM.
-Location: Lincoln Memorial Field, Field #3.
-Please bring cleats, shin guards, and water bottle.
-RSVP by Wednesday so we can plan accordingly.`
-      const result = parseImportText(simulatedText)
-      setOcrResult(result)
+    setOcrError("")
+    try {
+      const res = await fetch("/api/ocr", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ image: imageUrl }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        setOcrError(data.error || "Failed to process image")
+        setProcessing(false)
+        return
+      }
+      const r = data.result
+      setOcrResult({
+        source: r.source || "Unknown",
+        title: r.title || "Imported Screenshot",
+        dates: r.dates || [],
+        times: r.times || [],
+        locations: r.locations || [],
+        actionItems: r.actionItems || [],
+        rawText: r.extractedText || "",
+      })
+    } catch {
+      setOcrError("Network error. Please try again.")
+    } finally {
       setProcessing(false)
-    }, 1500)
+    }
   }
 
   function handleSave(type: "event" | "task" | "notification") {
@@ -349,10 +367,10 @@ RSVP by Wednesday so we can plan accordingly.`
                   <span className="text-sm text-muted-foreground truncate">{fileName}</span>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
-                  <Button variant="ghost" size="sm" onClick={() => { setImageUrl(null); setFileName(""); setOcrResult(null) }}>
+                  <Button variant="ghost" size="sm" onClick={() => { setImageUrl(null); setFileName(""); setOcrResult(null); setOcrError("") }}>
                     <X className="h-4 w-4" />
                   </Button>
-                  <Button size="sm" onClick={simulateOCR} disabled={processing} className="gap-1.5">
+                  <Button size="sm" onClick={runOCR} disabled={processing} className="gap-1.5">
                     {processing ? (
                       <>
                         <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -371,6 +389,15 @@ RSVP by Wednesday so we can plan accordingly.`
           )}
         </CardContent>
       </Card>
+
+      {ocrError && (
+        <Card className="border-destructive/30">
+          <CardContent className="flex items-center gap-2 p-4">
+            <AlertCircle className="h-4 w-4 shrink-0 text-destructive" />
+            <p className="text-sm text-destructive">{ocrError}</p>
+          </CardContent>
+        </Card>
+      )}
 
       {ocrResult && (
         <Card className="border-primary/30">
