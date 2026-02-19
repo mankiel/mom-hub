@@ -4,10 +4,8 @@ import {
   Users,
   User,
   GraduationCap,
-  Calendar,
   Mail,
   Phone,
-  Heart,
   Trophy,
 } from "lucide-react"
 import { DashboardLayout } from "@/components/mom-hub/dashboard-layout"
@@ -25,7 +23,8 @@ const familyMembers = [
     grade: "5th Grade",
     school: "Lincoln Elementary",
     activities: ["Soccer", "Art Club", "Chess"],
-    color: "chart-1",
+    avatarBg: "bg-chart-1/10",
+    avatarText: "text-chart-1",
   },
   {
     name: "Liam",
@@ -35,7 +34,8 @@ const familyMembers = [
     grade: "3rd Grade",
     school: "Lincoln Elementary",
     activities: ["Soccer", "Reading Club"],
-    color: "chart-2",
+    avatarBg: "bg-chart-2/10",
+    avatarText: "text-chart-2",
   },
   {
     name: "Sarah",
@@ -43,7 +43,8 @@ const familyMembers = [
     role: "Parent",
     email: "sarah@example.com",
     phone: "(555) 123-4567",
-    color: "chart-3",
+    avatarBg: "bg-chart-3/10",
+    avatarText: "text-chart-3",
   },
   {
     name: "John",
@@ -51,13 +52,18 @@ const familyMembers = [
     role: "Parent",
     email: "john@example.com",
     phone: "(555) 987-6543",
-    color: "chart-4",
+    avatarBg: "bg-chart-4/10",
+    avatarText: "text-chart-4",
   },
 ]
 
 export default function FamilyMembersPage() {
   const children = familyMembers.filter((member) => member.role === "Child")
   const parents = familyMembers.filter((member) => member.role === "Parent")
+
+  // Calculate dynamic metrics
+  const uniqueSchools = new Set(children.map((child) => child.school)).size
+  const totalActivities = new Set(children.flatMap((child) => child.activities || [])).size
 
   return (
     <DashboardLayout title="Family Members" subtitle="Manage your family">
@@ -84,11 +90,11 @@ export default function FamilyMembersPage() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">School</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">School{uniqueSchools > 1 ? "s" : ""}</CardTitle>
             <GraduationCap className="h-4 w-4 text-chart-3" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">1</div>
+            <div className="text-2xl font-bold">{uniqueSchools}</div>
             <p className="mt-1 text-xs text-muted-foreground">Lincoln Elementary</p>
           </CardContent>
         </Card>
@@ -98,7 +104,7 @@ export default function FamilyMembersPage() {
             <Trophy className="h-4 w-4 text-chart-5" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">5</div>
+            <div className="text-2xl font-bold">{totalActivities}</div>
             <p className="mt-1 text-xs text-muted-foreground">Total activities</p>
           </CardContent>
         </Card>
@@ -113,7 +119,7 @@ export default function FamilyMembersPage() {
                 <CardHeader>
                   <div className="flex items-center gap-4">
                     <Avatar className="h-16 w-16">
-                      <AvatarFallback className={`bg-${child.color}/10 text-${child.color} text-xl font-bold`}>
+                      <AvatarFallback className={`${child.avatarBg} ${child.avatarText} text-xl font-bold`}>
                         {child.initials}
                       </AvatarFallback>
                     </Avatar>
@@ -159,7 +165,7 @@ export default function FamilyMembersPage() {
                 <CardHeader>
                   <div className="flex items-center gap-4">
                     <Avatar className="h-16 w-16">
-                      <AvatarFallback className={`bg-${parent.color}/10 text-${parent.color} text-xl font-bold`}>
+                      <AvatarFallback className={`${parent.avatarBg} ${parent.avatarText} text-xl font-bold`}>
                         {parent.initials}
                       </AvatarFallback>
                     </Avatar>
