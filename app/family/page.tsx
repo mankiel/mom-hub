@@ -87,7 +87,6 @@ export default function FamilyMembersPage() {
   // Calculate dynamic metrics
   const schoolsSet = new Set(children.map((child) => child.school))
   const uniqueSchools = schoolsSet.size
-  const allSchools = Array.from(schoolsSet)
   const totalActivities = new Set(children.flatMap((child) => child.activities || [])).size
 
   return (
@@ -120,7 +119,7 @@ export default function FamilyMembersPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{uniqueSchools}</div>
-            <p className="mt-1 text-xs text-muted-foreground">{allSchools.join(", ")}</p>
+            <p className="mt-1 text-xs text-muted-foreground">{Array.from(schoolsSet).join(", ")}</p>
           </CardContent>
         </Card>
         <Card>
@@ -167,7 +166,7 @@ export default function FamilyMembersPage() {
                       <p className="text-xs text-muted-foreground mb-2">Activities</p>
                       <div className="flex flex-wrap gap-1.5">
                         {child.activities.map((activity, activityIndex) => (
-                          <Badge key={`${activity}-${activityIndex}`} variant="secondary" className="text-xs">
+                          <Badge key={`child-${index}-activity-${activityIndex}`} variant="secondary" className="text-xs">
                             {activity}
                           </Badge>
                         ))}
