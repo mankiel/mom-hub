@@ -49,14 +49,15 @@ const familyMembers = [
   },
 ]
 
-const getAvatarClasses = (index: number) => {
-  const classes = [
+const getAvatarClasses = (index: number, additionalClasses = "") => {
+  const baseClasses = [
     "bg-chart-1/10 text-chart-1",
     "bg-chart-2/10 text-chart-2",
     "bg-chart-3/10 text-chart-3",
     "bg-chart-4/10 text-chart-4",
   ]
-  return classes[index % classes.length]
+  const colorClass = baseClasses[index % baseClasses.length]
+  return additionalClasses ? `${colorClass} ${additionalClasses}` : colorClass
 }
 
 export default function FamilyMembersPage() {
@@ -64,8 +65,9 @@ export default function FamilyMembersPage() {
   const parents = familyMembers.filter((member) => member.role === "Parent")
 
   // Calculate dynamic metrics
-  const uniqueSchools = new Set(children.map((child) => child.school)).size
-  const allSchools = Array.from(new Set(children.map((child) => child.school)))
+  const schoolsSet = new Set(children.map((child) => child.school))
+  const uniqueSchools = schoolsSet.size
+  const allSchools = Array.from(schoolsSet)
   const totalActivities = new Set(children.flatMap((child) => child.activities || [])).size
 
   return (
@@ -122,7 +124,7 @@ export default function FamilyMembersPage() {
                 <CardHeader>
                   <div className="flex items-center gap-4">
                     <Avatar className="h-16 w-16">
-                      <AvatarFallback className={`${getAvatarClasses(index)} text-xl font-bold`}>
+                      <AvatarFallback className={getAvatarClasses(index, "text-xl font-bold")}>
                         {child.initials}
                       </AvatarFallback>
                     </Avatar>
@@ -168,7 +170,7 @@ export default function FamilyMembersPage() {
                 <CardHeader>
                   <div className="flex items-center gap-4">
                     <Avatar className="h-16 w-16">
-                      <AvatarFallback className={`${getAvatarClasses(children.length + index)} text-xl font-bold`}>
+                      <AvatarFallback className={getAvatarClasses(children.length + index, "text-xl font-bold")}>
                         {parent.initials}
                       </AvatarFallback>
                     </Avatar>
