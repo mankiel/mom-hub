@@ -1,7 +1,11 @@
 "use client"
 
-import { MomHubSidebar } from "@/components/mom-hub/sidebar"
-import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
+import {
+  MomHubSidebar,
+  SidebarProvider,
+  SidebarInset,
+  SidebarTrigger,
+} from "@/components/mom-hub/sidebar"
 import { Separator } from "@/components/ui/separator"
 
 interface DashboardLayoutProps {

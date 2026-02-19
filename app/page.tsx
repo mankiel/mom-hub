@@ -1,11 +1,11 @@
 "use client"
 
-import { MomHubSidebar } from "@/components/mom-hub/sidebar"
 import {
+  MomHubSidebar,
   SidebarProvider,
   SidebarInset,
   SidebarTrigger,
-} from "@/components/ui/sidebar"
+} from "@/components/mom-hub/sidebar"
 import { Separator } from "@/components/ui/separator"
 import { OverviewCards } from "@/components/mom-hub/overview-cards"
 import { ActivityFeed } from "@/components/mom-hub/activity-feed"
