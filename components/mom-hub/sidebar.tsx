@@ -11,8 +11,6 @@ import {
   HandHeart,
   CalendarDays,
   Bell,
-  Settings,
-  Users,
   PanelLeft,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -62,11 +60,6 @@ const SOURCES_NAV = [
   { title: "ClassDojo", href: "/classdojo", icon: GraduationCap },
   { title: "GameChanger", href: "/gamechanger", icon: Trophy },
   { title: "GetConnected", href: "/getconnected", icon: HandHeart },
-]
-
-const FOOTER_NAV = [
-  { title: "Family Members", href: "/family", icon: Users },
-  { title: "Settings", href: "/settings", icon: Settings },
 ]
 
 function NavItem({
@@ -140,11 +133,7 @@ export function MomHubSidebar() {
         </div>
       </nav>
 
-      <div className="space-y-0.5 border-t border-sidebar-border p-2">
-        {FOOTER_NAV.map((item) => (
-          <NavItem key={item.href} item={item} isActive={pathname === item.href} collapsed={false} />
-        ))}
-      </div>
+
     </aside>
   )
 }
