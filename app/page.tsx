@@ -1,7 +1,11 @@
 "use client"
 
 import { MomHubSidebar } from "@/components/mom-hub/sidebar"
-import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
+import {
+  SidebarProvider,
+  SidebarInset,
+  SidebarTrigger,
+} from "@/components/ui/sidebar"
 
 export default function Home() {
   return (
