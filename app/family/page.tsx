@@ -14,7 +14,27 @@ import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Separator } from "@/components/ui/separator"
 
-const familyMembers = [
+type Child = {
+  name: string
+  initials: string
+  role: "Child"
+  age: number
+  grade: string
+  school: string
+  activities?: string[]
+}
+
+type Parent = {
+  name: string
+  initials: string
+  role: "Parent"
+  email?: string
+  phone?: string
+}
+
+type FamilyMember = Child | Parent
+
+const familyMembers: FamilyMember[] = [
   {
     name: "Emma",
     initials: "EM",
