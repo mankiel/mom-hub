@@ -131,6 +131,7 @@ function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
           width={32}
           height={32}
           className="shrink-0 rounded-lg"
+          style={{ width: 32, height: "auto" }}
         />
         <div className="flex flex-col">
           <span className="text-sm font-semibold">Mom Hub</span>
