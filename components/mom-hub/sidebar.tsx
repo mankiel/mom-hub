@@ -1,6 +1,7 @@
 "use client"
 
-import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
+import { createContext, useContext, useState, useEffect } from "react"
+import type { ReactNode } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
@@ -11,6 +12,7 @@ import {
   HandHeart,
   CalendarDays,
   Bell,
+  ClipboardPaste,
   PanelLeft,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -35,7 +37,7 @@ export function SidebarProvider({ children }: { children: ReactNode }) {
     <SidebarContext.Provider
       value={{
         open,
-        toggle: () => setOpen((o) => !o),
+        toggle: () => setOpen((prev) => !prev),
         mobileOpen,
         setMobileOpen,
       }}
@@ -50,7 +52,6 @@ export function SidebarTrigger({ className }: { className?: string }) {
   return (
     <button
       onClick={() => {
-        // On mobile, open the sheet; on desktop, toggle the aside
         if (window.innerWidth < 768) {
           setMobileOpen(true)
         } else {
@@ -78,6 +79,7 @@ export function SidebarInset({ children }: { children: ReactNode }) {
 
 const MAIN_NAV = [
   { title: "Overview", href: "/", icon: LayoutDashboard },
+  { title: "Smart Import", href: "/import", icon: ClipboardPaste },
   { title: "Calendar", href: "/calendar", icon: CalendarDays },
   { title: "Notifications", href: "/notifications", icon: Bell },
 ]
@@ -88,17 +90,15 @@ const SOURCES_NAV = [
   { title: "GetConnected", href: "/getconnected", icon: HandHeart },
 ]
 
-function NavItem({
-  item,
-  isActive,
-  collapsed,
-  onClick,
-}: {
+interface NavItemProps {
   item: { title: string; href: string; icon: React.ComponentType<{ className?: string }> }
   isActive: boolean
   collapsed: boolean
   onClick?: () => void
-}) {
+}
+
+function NavItem({ item, isActive, collapsed, onClick }: NavItemProps) {
+  const IconComponent = item.icon
   return (
     <Link
       href={item.href}
@@ -111,7 +111,7 @@ function NavItem({
           : "text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground"
       )}
     >
-      <item.icon className="h-4 w-4 shrink-0" />
+      <IconComponent className="h-4 w-4 shrink-0" />
       {!collapsed && <span className="truncate">{item.title}</span>}
     </Link>
   )
@@ -129,7 +129,6 @@ function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
           width={32}
           height={32}
           className="shrink-0 rounded-lg"
-          style={{ width: 32, height: "auto" }}
         />
         <div className="flex flex-col">
           <span className="text-sm font-semibold">Mom Hub</span>
@@ -180,7 +179,6 @@ export function MomHubSidebar() {
   const pathname = usePathname()
   const { open, mobileOpen, setMobileOpen } = useContext(SidebarContext)
 
-  // Close mobile sheet on route change
   useEffect(() => {
     setMobileOpen(false)
   }, [pathname, setMobileOpen])
