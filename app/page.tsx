@@ -1,11 +1,7 @@
 "use client"
 
 import { MomHubSidebar } from "@/components/mom-hub/sidebar"
-import {
-  SidebarProvider,
-  SidebarInset,
-  SidebarTrigger,
-} from "@/components/ui/sidebar"
+import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar"
 import { Separator } from "@/components/ui/separator"
 
 export default function Home() {
