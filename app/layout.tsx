@@ -8,8 +8,8 @@ const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'Mom Hub',
-  description: 'Family management dashboard for busy moms',
+  title: 'Mom Hub - Family Dashboard',
+  description: 'One dashboard for ClassDojo, GameChanger, and GetConnected. Stay on top of school, sports, and volunteering.',
 }
 
 export default function RootLayout({
