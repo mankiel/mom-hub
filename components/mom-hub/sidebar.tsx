@@ -13,6 +13,7 @@ import {
   CalendarDays,
   Bell,
   ClipboardPaste,
+  Plug,
   PanelLeft,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -88,6 +89,7 @@ const SOURCES_NAV = [
   { title: "ClassDojo", href: "/classdojo", icon: GraduationCap },
   { title: "GameChanger", href: "/gamechanger", icon: Trophy },
   { title: "GetConnected", href: "/getconnected", icon: HandHeart },
+  { title: "Connections", href: "/connections", icon: Plug },
 ]
 
 interface NavItemProps {
