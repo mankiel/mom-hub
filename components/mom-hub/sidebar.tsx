@@ -5,12 +5,13 @@ import { usePathname } from "next/navigation"
 import {
   Heart,
   LayoutDashboard,
-  CalendarDays,
-  MessageCircle,
   GraduationCap,
   Trophy,
   HandHeart,
-  Home,
+  CalendarDays,
+  Bell,
+  Settings,
+  Users,
 } from "lucide-react"
 import {
   Sidebar,
@@ -25,13 +26,16 @@ import {
   SidebarFooter,
 } from "@/components/ui/sidebar"
 
-const NAV = [
-  { title: "Overview", href: "/dashboard", icon: LayoutDashboard },
-  { title: "Calendar", href: "/dashboard#calendar", icon: CalendarDays },
-  { title: "Messages", href: "/dashboard#messages", icon: MessageCircle },
-  { title: "Behavior", href: "/dashboard#behavior", icon: GraduationCap },
-  { title: "Sports", href: "/dashboard#sports", icon: Trophy },
-  { title: "Volunteering", href: "/dashboard#volunteering", icon: HandHeart },
+const MAIN_NAV = [
+  { title: "Overview", href: "/", icon: LayoutDashboard },
+  { title: "Calendar", href: "/calendar", icon: CalendarDays },
+  { title: "Notifications", href: "/notifications", icon: Bell },
+]
+
+const SOURCES_NAV = [
+  { title: "ClassDojo", href: "/classdojo", icon: GraduationCap, description: "Behavior & School" },
+  { title: "GameChanger", href: "/gamechanger", icon: Trophy, description: "Sports & Games" },
+  { title: "GetConnected", href: "/getconnected", icon: HandHeart, description: "Volunteering" },
 ]
 
 export function MomHubSidebar() {
@@ -40,20 +44,41 @@ export function MomHubSidebar() {
   return (
     <Sidebar>
       <SidebarHeader>
-        <Link href="/" className="flex items-center gap-2 px-2 py-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-            <Heart className="h-4 w-4 text-primary-foreground" />
+        <Link href="/" className="flex items-center gap-3 px-2 py-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-sidebar-primary">
+            <Heart className="h-5 w-5 text-sidebar-primary-foreground" />
           </div>
-          <span className="text-base font-semibold">Mom Hub</span>
+          <div className="flex flex-col">
+            <span className="text-sm font-semibold text-sidebar-foreground">Mom Hub</span>
+            <span className="text-xs text-sidebar-foreground/60">Family Dashboard</span>
+          </div>
         </Link>
       </SidebarHeader>
 
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Dashboard</SidebarGroupLabel>
+          <SidebarGroupLabel>Main</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {NAV.map((item) => (
+              {MAIN_NAV.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild isActive={pathname === item.href}>
+                    <Link href={item.href}>
+                      <item.icon className="h-4 w-4" />
+                      <span>{item.title}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarGroup>
+          <SidebarGroupLabel>Connected Apps</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {SOURCES_NAV.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild isActive={pathname === item.href}>
                     <Link href={item.href}>
@@ -71,10 +96,18 @@ export function MomHubSidebar() {
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild>
-              <Link href="/">
-                <Home className="h-4 w-4" />
-                <span>Back to Home</span>
+            <SidebarMenuButton asChild isActive={pathname === "/family"}>
+              <Link href="/family">
+                <Users className="h-4 w-4" />
+                <span>Family Members</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild isActive={pathname === "/settings"}>
+              <Link href="/settings">
+                <Settings className="h-4 w-4" />
+                <span>Settings</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
